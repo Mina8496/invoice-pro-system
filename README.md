@@ -1,16 +1,17 @@
-# invoicepro
+# InvoicePro
 
-A new Flutter project.
+InvoicePro is a simple cashier and invoice management system that helps businesses create and manage invoices, track sales, and organize daily transactions efficiently.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- Create and manage invoices
+- Track daily sales
+- Simple and clean user interface
+- Easy invoice management
+- Designed for small businesses and shops
 
-A few resources to get you started if this is your first Flutter project:
+## Technologies Used
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Programming Language: (dart)
+- Framework: (flutter)
+- Database: (SQL Server)
