@@ -11,6 +11,6 @@ class InvoicePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: InvoicePageBody());
+    return Scaffold( body: InvoicePageBody());
   }
 }
