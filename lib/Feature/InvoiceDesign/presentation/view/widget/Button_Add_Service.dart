@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:invoicepro/Feature/Invoice/presentation/view/controller/invoice_controller.dart';
-import 'package:invoicepro/utils/Asset_Paths.dart';
-import 'package:invoicepro/utils/widgets/app_textView.dart';
+import 'package:invoicepro/Feature/InvoiceDesign/presentation/view/controller/invoice_controller.dart';
+import 'package:invoicepro/core/utils/Asset_Paths.dart';
+import 'package:invoicepro/core/utils/widgets/app_textView.dart';
 
 class ButtonAddService extends StatelessWidget {
   final String text;
