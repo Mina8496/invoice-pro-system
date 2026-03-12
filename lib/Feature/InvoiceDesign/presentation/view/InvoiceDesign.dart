@@ -3,7 +3,8 @@ import 'package:invoicepro/core/utils/Asset_Paths.dart';
 import 'package:invoicepro/core/utils/widgets/app_textView.dart';
 
 class InvoiceDesign extends StatelessWidget {
-  const InvoiceDesign({super.key});
+
+  const InvoiceDesign({super.key, });
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +35,7 @@ class InvoiceDesign extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                     SizedBox(height: 10),
-                    Text("رقم الفاتورة: 5170"),
+                    Text("رقم الفاتورة: 54455"),
                     Text("تحرير في يوم : 2026/02/20"),
 
                     // Text("رقم السجل التجاري: 28484"),
@@ -57,7 +58,7 @@ class InvoiceDesign extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(border: Border.all()),
                     child: const Text(
-                      "0000004976",
+                      "0000005170",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),

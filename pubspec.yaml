@@ -29,6 +29,7 @@ environment:
 # versions available, run `flutter pub outdated`.
 dependencies:
   cupertino_icons: ^1.0.8
+  dartz: ^0.10.1
   flutter:
     sdk: flutter
   flutter_screenutil: ^5.9.3
@@ -66,15 +67,15 @@ flutter:
       fonts:
         - asset: assets/fonts/Almarai-Bold.ttf
           weight: 700
-    # - family: Cairo-Black
-    #   fonts:
-    #     - asset: assets/fonts/Cairo-Black.ttf
-    #       weight: 700
-    # - family: RampartOne
-    #   fonts:
-    #     - asset: assets/fonts/RampartOne-Regular.ttf
-    #       weight: 700
-        # - asset: fonts/Schyler-Italic.ttf
+          # - family: Cairo-Black
+          #   fonts:
+          #     - asset: assets/fonts/Cairo-Black.ttf
+          #       weight: 700
+          # - family: RampartOne
+          #   fonts:
+          #     - asset: assets/fonts/RampartOne-Regular.ttf
+          #       weight: 700
+          # - asset: fonts/Schyler-Italic.ttf
           # style: Regular
   #   - family: Trajan Pro
   #     fonts:
