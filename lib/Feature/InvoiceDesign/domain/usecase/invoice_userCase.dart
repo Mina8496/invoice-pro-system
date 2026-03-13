@@ -11,6 +11,6 @@ class InvoiceUsercase extends UserCase<List<InvoiceEntity>, NoParam> {
 
   @override
   Future<Either<Failure, List<InvoiceEntity>>> call([NoParam? param]) async {
-    return await invoiceRepo.invoiceItem();
+    return await invoiceRepo.fetchFeaturedInvoice();
   }
 }
