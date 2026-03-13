@@ -1,5 +1,4 @@
 class InvoiceItemModel {
-
   final int? id;
   final int? invoiceId;
   final int serviceId;
@@ -22,7 +21,7 @@ class InvoiceItemModel {
     return {
       "id": id,
       "invoice_id": invoiceId,
-      "product_id": serviceId,
+      "service_id": serviceId,
       "name": name,
       "quantity": quantity,
       "price": price,
@@ -34,7 +33,7 @@ class InvoiceItemModel {
     return InvoiceItemModel(
       id: map["id"],
       invoiceId: map["invoice_id"],
-      serviceId: map["product_id"],
+      serviceId: map["service_id"],
       name: map["name"],
       quantity: map["quantity"],
       price: map["price"],

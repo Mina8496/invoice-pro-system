@@ -21,15 +21,7 @@ class InvoiceModel {
     required this.items,
   });
 
-  double get total {
-    double sum = 0;
-
-    for (var item in items) {
-      sum += item.total;
-    }
-
-    return sum;
-  }
+  double get total => items.fold(0, (sum, item) => sum + item.total);
 
   Map<String, dynamic> toMap() {
     return {
@@ -40,7 +32,7 @@ class InvoiceModel {
       "carBrand": carBrand,
       "plateNumber": plateNumber,
 
-      "date": date.toString(),
+      "date": date.toIso8601String(),
       "total": total,
     };
   }
@@ -50,6 +42,9 @@ class InvoiceModel {
       id: map["id"],
       customerName: map["customer_name"],
       phone: map["phone"],
+      carModel: map["carModel"],
+      carBrand: map["carBrand"],
+      plateNumber: map["plateNumber"],
       date: DateTime.parse(map["date"]),
       items: [],
     );

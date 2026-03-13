@@ -3,5 +3,13 @@ import 'package:invoicepro/Feature/InvoiceDesign/domain/entity/invoice_entity.da
 import 'package:invoicepro/core/error/Failure.dart';
 
 abstract class InvoiceRepo {
-  Future<Either<Failure, List<InvoiceEntity>>> fetchFeaturedInvoice();
+
+  Future<Either<Failure, int>> createInvoice(InvoiceEntity invoice);
+
+  Future<Either<Failure, List<InvoiceEntity>>> getInvoices();
+
+  Future<Either<Failure, InvoiceEntity>> getInvoiceById(int id);
+
+  Future<Either<Failure, void>> deleteInvoice(int id);
+
 }
