@@ -1,8 +1,8 @@
-import 'package:invoicepro/Feature/Invoice/domin/entity/invoice_item_entity.dart';
+import 'invoice_item_entity.dart';
 
 class InvoiceEntity {
   final String invoiceNumber;
-  final String date;
+  final DateTime date;
 
   final String customerName;
   final String phone;
@@ -13,8 +13,6 @@ class InvoiceEntity {
 
   final List<InvoiceItemEntity> items;
 
-  final double total;
-
   InvoiceEntity({
     required this.invoiceNumber,
     required this.date,
@@ -24,6 +22,13 @@ class InvoiceEntity {
     required this.carBrand,
     required this.plateNumber,
     required this.items,
-    required this.total,
   });
+
+  double get total {
+    double sum = 0;
+    for (var item in items) {
+      sum += item.total;
+    }
+    return sum;
+  }
 }

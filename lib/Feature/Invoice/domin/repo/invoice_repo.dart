@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
-import 'package:invoicepro/Feature/InvoiceDesign/domain/entity/invoice_entity.dart';
-import 'package:invoicepro/core/error/Failure.dart';
+import 'package:invoicepro/Feature/Invoice/domin/entity/invoice_entity.dart';
+import 'package:invoicepro/core/error/failure.dart';
 
 abstract class InvoiceRepo {
 
@@ -11,5 +11,4 @@ abstract class InvoiceRepo {
   Future<Either<Failure, InvoiceEntity>> getInvoiceById(int id);
 
   Future<Either<Failure, void>> deleteInvoice(int id);
-
 }
