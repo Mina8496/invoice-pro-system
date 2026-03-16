@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:invoicepro/Feature/Invoice/domin/usecase/calculate_total.dart';
-import 'package:invoicepro/Feature/Invoice/presentation/view/controller/invoice_controller.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:invoicepro/Feature/Invoice/presentation/manger/featured_invoice_cubit/featured_invoices_cubit.dart';
 import 'package:invoicepro/Feature/Invoice/presentation/view/widget/invoice_page_body.dart';
 
 class InvoicePage extends StatelessWidget {
-  InvoicePage({super.key});
-
-  final controller = Get.put(InvoiceController(CalculateTotal()));
+  const InvoicePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold( body: InvoicePageBody());
+    return BlocProvider(
+      create: (context) => FeaturedInvoicesCubit(),
+      child: const InvoicePageBody(),
+    );
   }
 }

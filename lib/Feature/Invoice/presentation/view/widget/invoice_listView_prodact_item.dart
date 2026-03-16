@@ -22,9 +22,9 @@ class InvoiceListViewProdactItem extends StatelessWidget {
     
             return Card(
               child: ListTile(
-                title: Text(item.name),
+                title: Text(item.customerName),
                 subtitle: Text(
-                  "الكمية: ${item.quantity} | السعر: ${item.price}",
+                  "الكمية: ${item.items} | السعر: ${item.carBrand}",
                 ),
                 trailing: IconButton(
                   icon: const Icon(Icons.delete, color: Colors.red),

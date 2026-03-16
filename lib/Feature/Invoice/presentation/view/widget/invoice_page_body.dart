@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:get/state_manager.dart';
-import 'package:invoicepro/Feature/Invoice/presentation/view/controller/invoice_controller.dart';
-import 'package:invoicepro/Feature/Invoice/presentation/view/widget/Button_Add_Service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:invoicepro/Feature/Invoice/domin/entity/invoice_item_entity.dart';
+import 'package:invoicepro/Feature/Invoice/presentation/manger/featured_invoice_cubit/featured_invoices_cubit.dart';
 import 'package:invoicepro/Feature/InvoiceDesign/presentation/view/InvoiceDesign.dart';
-import 'package:invoicepro/Feature/Invoice/presentation/view/widget/invoice_listView_prodact_item.dart';
 import 'package:invoicepro/core/utils/Asset_Paths.dart';
 
-class InvoicePageBody extends GetView<InvoiceController> {
+class InvoicePageBody extends StatelessWidget {
   const InvoicePageBody({super.key});
 
   @override
@@ -27,16 +26,32 @@ class InvoicePageBody extends GetView<InvoiceController> {
               padding: const EdgeInsets.all(12),
               child: Row(
                 children: [
-                  ButtonAddService(controller: controller, text: "زوايا امامى"),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<FeaturedInvoicesCubit>().addItem(
+                        InvoiceItemEntity(
+                          name: "زوايا امامى",
+                          quantity: 1,
+                          price: 225,
+                        ),
+                      );
+                    },
+                    child: const Text("إضافة عنصر"),
+                  ),
 
-                  InvoiceListViewProdactItem(controller: controller),
+                  // ButtonAddService(controller: controller, text: "زوايا امامى"),
+
+                  // InvoiceListViewProdactItem(controller: controller),
                 ],
               ),
             ),
           ),
 
           /// ملخص الفاتورة
-          Expanded(flex: 1, child: InvoiceDesign()),
+          SizedBox(
+            width: 620,
+            child: Card(elevation: 10, child: InvoiceDesign()),
+          ),
         ],
       ),
     );
