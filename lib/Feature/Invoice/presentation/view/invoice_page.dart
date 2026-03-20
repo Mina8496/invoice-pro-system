@@ -10,7 +10,7 @@ class InvoicePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => FeaturedInvoicesCubit(),
-      child: const InvoicePageBody(),
+      child: Scaffold(body: const InvoicePageBody()),
     );
   }
 }

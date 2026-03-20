@@ -13,23 +13,23 @@ class FooterSeactions extends StatelessWidget {
         const Center(
           child: Text(
             "مراجعة الزوايا : 15 يوم  - استكمال الزوايا خلال 3 اشهر بفاتورة الكشف عند استكمال الزوايا يتم اخذ دور جديد",
-            style: TextStyle(fontSize: 10),
+            style: TextStyle(fontSize: 12),
           ),
         ),
-        SizedBox(height: 25.h),
+        SizedBox(height: 10.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Image.asset(AssetPaths.qrCode, width: 80),
-
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  SizedBox(height: 10.h),
+                  SizedBox(height: 8.h),
                   Text(": ارقام التواصل"),
-                  SizedBox(height: 10.h),
-                  Text("632541256321", overflow: TextOverflow.ellipsis),
+                  SizedBox(height: 5.h),
+                  Text("0120 3959 270", overflow: TextOverflow.ellipsis),
+                  Text("0122 3017 289", overflow: TextOverflow.ellipsis),
                 ],
               ),
             ),
@@ -38,7 +38,7 @@ class FooterSeactions extends StatelessWidget {
         SizedBox(height: 30.h),
 
         const Center(
-          child: Text("شكراً لزيارتكم", style: TextStyle(fontSize: 16)),
+          child: Text("شكراً لزيارتكم", style: TextStyle(fontSize: 12)),
         ),
       ],
     );

@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:invoicepro/Feature/Invoice/domin/entity/invoice_entity.dart';
 import 'package:invoicepro/Feature/Invoice/domin/entity/invoice_item_entity.dart';
 
 part 'featured_invoices_state.dart';
@@ -9,6 +10,12 @@ class FeaturedInvoicesCubit extends Cubit<FeaturedInvoicesState> {
   final List<InvoiceItemEntity> items = [];
 
   double total = 0;
+  InvoiceEntity? customer;
+
+  void setCustomer(InvoiceEntity data) {
+    customer = data;
+    emit(InvoiceSuccess());
+  }
 
   void addItem(InvoiceItemEntity item) {
     items.add(item);
@@ -31,4 +38,14 @@ class FeaturedInvoicesCubit extends Cubit<FeaturedInvoicesState> {
 
     emit(InvoiceUpdated(List.from(items), total));
   }
+
+  int invoiceCounter = 1;
+
+int currentInvoiceNumber = 1;
+
+void generateInvoiceNumber() {
+  currentInvoiceNumber = invoiceCounter;
+  invoiceCounter++;
+  emit(InvoiceSuccess());
+}
 }

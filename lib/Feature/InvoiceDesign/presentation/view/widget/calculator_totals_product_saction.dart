@@ -3,9 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:invoicepro/Feature/Invoice/presentation/manger/featured_invoice_cubit/featured_invoices_cubit.dart';
 
 class CalculatorTotalsProductSaction extends StatelessWidget {
-  const CalculatorTotalsProductSaction({
-    super.key,
-  });
+  const CalculatorTotalsProductSaction({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,10 +19,8 @@ class CalculatorTotalsProductSaction extends StatelessWidget {
               child: Wrap(
                 alignment: WrapAlignment.spaceBetween,
                 children: [
-                  Text(
-                    "${context.watch<FeaturedInvoicesCubit>().total}",
-                  ),
-                  const Text(":السعر المطلوب"),
+                  Text("${context.watch<FeaturedInvoicesCubit>().total}"),
+                  const Text("  :الإجمـالى"),
                 ],
               ),
             ),

@@ -5,8 +5,8 @@ sealed class FeaturedInvoicesState {}
 final class FeaturedInvoicesInitial extends FeaturedInvoicesState {}
 
 class InvoiceUpdated extends FeaturedInvoicesState {
-  final List<InvoiceItemEntity> items;
-  final double total;
+  final List<InvoiceItemEntity>? items;
+  final double? total;
 
   InvoiceUpdated(this.items, this.total);
 }

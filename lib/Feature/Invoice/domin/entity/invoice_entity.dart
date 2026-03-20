@@ -10,6 +10,7 @@ class InvoiceEntity {
   final String carModel;
   final String carBrand;
   final String plateNumber;
+  final String notes;
 
   final List<InvoiceItemEntity> items;
 
@@ -22,6 +23,7 @@ class InvoiceEntity {
     required this.carBrand,
     required this.plateNumber,
     required this.items,
+    required this.notes,
   });
 
   double get total {

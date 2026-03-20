@@ -3,7 +3,6 @@ import 'package:invoicepro/Feature/Invoice/domin/entity/invoice_entity.dart';
 import 'package:invoicepro/core/error/failure.dart';
 
 abstract class InvoiceRepo {
-
   Future<Either<Failure, int>> createInvoice(InvoiceEntity invoice);
 
   Future<Either<Failure, List<InvoiceEntity>>> getInvoices();

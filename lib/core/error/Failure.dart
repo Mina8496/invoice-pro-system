@@ -5,5 +5,6 @@ abstract class Failure {
 }
 
 class DatabaseFailure extends Failure {
-  DatabaseFailure(String message) : super(message);
+   // ignore: use_super_parameters
+   DatabaseFailure(String message) : super(message);
 }
