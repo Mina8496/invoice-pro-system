@@ -23,27 +23,13 @@ class _CustomerDataFormSectionState extends State<CustomerDataFormSection> {
   final notesController = TextEditingController();
 
   void saveCustomer() {
-    final cubit = context.read<FeaturedInvoicesCubit>();
-
-    cubit.generateInvoiceNumber();
-
-    final customer = InvoiceEntity(
-      invoiceNumber: cubit.currentInvoiceNumber.toString(),
-      date: DateTime.now(),
-      customerName: nameController.text,
-      phone: phoneController.text,
-      carModel: carModelController.text,
-      carBrand: carBrandController.text,
-      plateNumber: plateController.text,
-      notes: notesController.text,
-      items: [],
-    );
-
-    cubit.setCustomer(customer);
-
     if (_formKey.currentState!.validate()) {
+      final cubit = context.read<FeaturedInvoicesCubit>();
+
+      cubit.generateInvoiceNumber();
+
       final customer = InvoiceEntity(
-        invoiceNumber: "",
+        invoiceNumber: cubit.state.invoiceNumber.toString(),
         date: DateTime.now(),
         customerName: nameController.text,
         phone: phoneController.text,
@@ -54,11 +40,27 @@ class _CustomerDataFormSectionState extends State<CustomerDataFormSection> {
         items: [],
       );
 
-      context.read<FeaturedInvoicesCubit>().setCustomer(customer);
+      cubit.setCustomer(customer);
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("تم حفظ بيانات العميل")));
+      if (_formKey.currentState!.validate()) {
+        final customer = InvoiceEntity(
+          invoiceNumber: "",
+          date: DateTime.now(),
+          customerName: nameController.text,
+          phone: phoneController.text,
+          carModel: carModelController.text,
+          carBrand: carBrandController.text,
+          plateNumber: plateController.text,
+          notes: notesController.text,
+          items: [],
+        );
+
+        context.read<FeaturedInvoicesCubit>().setCustomer(customer);
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("تم حفظ بيانات العميل")));
+      }
     }
   }
 

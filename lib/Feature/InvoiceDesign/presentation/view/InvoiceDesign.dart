@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:invoicepro/Feature/Invoice/domin/entity/invoice_entity.dart';
+import 'package:invoicepro/Feature/Invoice/presentation/manger/featured_invoice_cubit/invoice_state.dart';
 import 'package:invoicepro/Feature/InvoiceDesign/presentation/view/widget/HeadSeactions_Invoice_Design.dart';
 import 'package:invoicepro/Feature/InvoiceDesign/presentation/view/widget/Invoice_Number_Saction.dart';
 import 'package:invoicepro/Feature/InvoiceDesign/presentation/view/widget/calculator_totals_product_saction.dart';
@@ -12,19 +14,23 @@ class InvoiceDesign extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FeaturedInvoicesCubit, FeaturedInvoicesState>(
+    return BlocBuilder<FeaturedInvoicesCubit, InvoiceState>(
       builder: (context, state) {
-        final cubit = context.read<FeaturedInvoicesCubit>();
-        final customer = cubit.customer;
-        final items = cubit.items;
-
-        final pages = splitItems(items, 12);
+        final cubit = context.watch<FeaturedInvoicesCubit>();
+        final pages = cubit.pageModels;
+        final customer = cubit.state.customer;
 
         return ListView.builder(
           shrinkWrap: true,
           itemCount: pages.isEmpty ? 1 : pages.length,
           itemBuilder: (context, index) {
-            final pageItems = pages.isEmpty ? [] : pages[index];
+            final page = pages[index];
+
+            ProductsTableSeaction(items: page.items);
+
+            if (page.showTotals) {
+              CalculatorTotalsProductSaction();
+            }
 
             return Container(
               margin: const EdgeInsets.only(bottom: 20),
@@ -46,30 +52,15 @@ class InvoiceDesign extends StatelessWidget {
                   SizedBox(height: 10),
 
                   /// بيانات العميل (أول صفحة فقط)
-                  if (index == 0 && customer != null) ...[
-                    Text("اسم العميل : ${customer.customerName}"),
-                    SizedBox(height: 5),
-                    Text("${customer.phone} : التليفون"),
-                    SizedBox(height: 5),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("الموديل: ${customer.carModel}"),
-                        Text("الماركة: ${customer.carBrand}"),
-                        Text("رقم اللوحة : ${customer.plateNumber}"),
-                      ],
-                    ),
-                    Text("${customer.notes} : ملاحظة"),
-                  ],
+                  if (page.showCustomer && customer != null) ...dataClent(customer),
 
                   SizedBox(height: 10),
 
                   /// الجدول
-                  ProductsTableSeaction(items: pageItems),
+                  ProductsTableSeaction(items: page.items),
 
                   /// الإجمالي (آخر صفحة فقط)
-                  if (index == pages.length - 1 || pages.isEmpty)
-                    CalculatorTotalsProductSaction(),
+                  if (page.showTotals) CalculatorTotalsProductSaction(),
                   const Spacer(),
 
                   SizedBox(height: 10),
@@ -85,16 +76,22 @@ class InvoiceDesign extends StatelessWidget {
       },
     );
   }
-}
 
-List<List<dynamic>> splitItems(List items, int perPage) {
-  List<List<dynamic>> pages = [];
-
-  for (int i = 0; i < items.length; i += perPage) {
-    pages.add(
-      items.sublist(i, i + perPage > items.length ? items.length : i + perPage),
-    );
+  List<Widget> dataClent(InvoiceEntity customer) {
+    return [
+                  Text("اسم العميل : ${customer.customerName}"),
+                  SizedBox(height: 5),
+                  Text("${customer.phone} : التليفون"),
+                  SizedBox(height: 5),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("الموديل: ${customer.carModel}"),
+                      Text("الماركة: ${customer.carBrand}"),
+                      Text("رقم اللوحة : ${customer.plateNumber}"),
+                    ],
+                  ),
+                  Text("${customer.notes} : ملاحظة"),
+                ];
   }
-
-  return pages;
 }

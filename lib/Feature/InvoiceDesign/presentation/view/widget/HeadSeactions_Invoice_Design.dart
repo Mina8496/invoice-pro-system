@@ -9,14 +9,15 @@ class HeadSeactionsInvoiceDesign extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.watch<FeaturedInvoicesCubit>();
-    final customer = cubit.customer;
+    final state = context.watch<FeaturedInvoicesCubit>().state;
+
     String formatDate(DateTime date) {
       return "${date.year}/${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}";
     }
 
+    final customer = state.customer;
+    final invoiceNumber = state.invoiceNumber;
     final date = customer?.date ?? DateTime.now();
-    final invoiceNumber = cubit.currentInvoiceNumber;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,

@@ -37,7 +37,7 @@ class InvoiceRepoImpl implements InvoiceRepo {
 
       return Right(invoiceId);
     } catch (e) {
-      return Left(DatabaseFailure(e.toString()));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
@@ -56,7 +56,7 @@ class InvoiceRepoImpl implements InvoiceRepo {
 
       return const Right(null);
     } catch (e) {
-      return Left(DatabaseFailure(e.toString()));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
@@ -72,7 +72,7 @@ class InvoiceRepoImpl implements InvoiceRepo {
       );
 
       if (invoiceMap.isEmpty) {
-        return Left(DatabaseFailure("Invoice not found"));
+        return Left(CacheFailure("Invoice not found"));
       }
 
       final invoice = invoiceMap.first;
@@ -105,7 +105,7 @@ class InvoiceRepoImpl implements InvoiceRepo {
         ),
       );
     } catch (e) {
-      return Left(DatabaseFailure(e.toString()));
+      return Left(ServerFailure(e.toString()));
     }
   }
 
@@ -150,7 +150,7 @@ class InvoiceRepoImpl implements InvoiceRepo {
 
       return Right(invoices);
     } catch (e) {
-      return Left(DatabaseFailure(e.toString()));
+      return Left(ServerFailure(e.toString()));
     }
   }
 }

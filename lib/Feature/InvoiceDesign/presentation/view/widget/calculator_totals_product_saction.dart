@@ -19,7 +19,7 @@ class CalculatorTotalsProductSaction extends StatelessWidget {
               child: Wrap(
                 alignment: WrapAlignment.spaceBetween,
                 children: [
-                  Text("${context.watch<FeaturedInvoicesCubit>().total}"),
+                  Text("${context.watch<FeaturedInvoicesCubit>().state.total}"),
                   const Text("  :الإجمـالى"),
                 ],
               ),

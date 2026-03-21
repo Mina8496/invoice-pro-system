@@ -7,8 +7,10 @@ class InvoiceNumberSaction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.watch<FeaturedInvoicesCubit>();
-    final invoiceNumber = cubit.currentInvoiceNumber;
+    final invoiceNumber = context
+        .watch<FeaturedInvoicesCubit>()
+        .state
+        .invoiceNumber;
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

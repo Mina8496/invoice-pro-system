@@ -4,7 +4,17 @@ abstract class Failure {
   Failure(this.message);
 }
 
-class DatabaseFailure extends Failure {
-   // ignore: use_super_parameters
-   DatabaseFailure(String message) : super(message);
+class ServerFailure extends Failure {
+  // ignore: use_super_parameters
+  ServerFailure(String message) : super(message);
+}
+
+class CacheFailure extends Failure {
+  // ignore: use_super_parameters
+  CacheFailure(String message) : super(message);
+}
+
+class NetWorkFailure extends Failure {
+  // ignore: use_super_parameters
+  NetWorkFailure(String message) : super(message);
 }
