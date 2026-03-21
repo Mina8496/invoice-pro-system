@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:invoicepro/Feature/Invoice/presentation/view/widget/Button_Add_Service.dart';
+import 'package:invoicepro/Feature/Invoice/presentation/view/widget/services_section.dart';
 import 'package:invoicepro/Feature/InvoiceDesign/presentation/view/InvoiceDesign.dart';
 import 'package:invoicepro/Feature/InvoiceDesign/presentation/view/widget/customer_dataForm_section.dart';
 import 'package:invoicepro/core/utils/Asset_Paths.dart';
@@ -22,21 +22,25 @@ class InvoicePageBody extends StatelessWidget {
           Expanded(
             flex: 2,
             child: SingleChildScrollView(
+              // ✅ مهم جدًا
               child: Column(
-                children: [
+                children: const [
                   CustomerDataFormSection(),
-                  ButtonAddService(
-                    text: "زوايا امامى",
-                    quantity: 1,
-                    price: 225,
-                  ),
+                  SizedBox(height: 10),
+                  ServicesSection(),
                 ],
               ),
             ),
           ),
-          SizedBox(
-            width: 620,
-            child: Card(elevation: 10, child: InvoiceDesign()),
+
+          const SizedBox(width: 10),
+
+          Align(
+            alignment: Alignment.topCenter,
+            child: SizedBox(
+              width: 620,
+              child: Card(elevation: 10, child: InvoiceDesign()),
+            ),
           ),
         ],
       ),

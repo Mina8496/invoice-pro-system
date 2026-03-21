@@ -19,6 +19,7 @@ class InvoiceDesign extends StatelessWidget {
         final cubit = context.watch<FeaturedInvoicesCubit>();
         final pages = cubit.pageModels;
         final customer = cubit.state.customer;
+        final items = state.items;
 
         return ListView.builder(
           shrinkWrap: true,
@@ -26,7 +27,7 @@ class InvoiceDesign extends StatelessWidget {
           itemBuilder: (context, index) {
             final page = pages[index];
 
-            ProductsTableSeaction(items: page.items);
+            ProductsTableSeaction(items: items);
 
             if (page.showTotals) {
               CalculatorTotalsProductSaction();
@@ -52,7 +53,8 @@ class InvoiceDesign extends StatelessWidget {
                   SizedBox(height: 10),
 
                   /// بيانات العميل (أول صفحة فقط)
-                  if (page.showCustomer && customer != null) ...dataClent(customer),
+                  if (page.showCustomer && customer != null)
+                    ...dataClent(customer),
 
                   SizedBox(height: 10),
 
@@ -79,19 +81,19 @@ class InvoiceDesign extends StatelessWidget {
 
   List<Widget> dataClent(InvoiceEntity customer) {
     return [
-                  Text("اسم العميل : ${customer.customerName}"),
-                  SizedBox(height: 5),
-                  Text("${customer.phone} : التليفون"),
-                  SizedBox(height: 5),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("الموديل: ${customer.carModel}"),
-                      Text("الماركة: ${customer.carBrand}"),
-                      Text("رقم اللوحة : ${customer.plateNumber}"),
-                    ],
-                  ),
-                  Text("${customer.notes} : ملاحظة"),
-                ];
+      Text("اسم العميل : ${customer.customerName}"),
+      SizedBox(height: 5),
+      Text("${customer.phone} : التليفون"),
+      SizedBox(height: 5),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text("الموديل: ${customer.carModel}"),
+          Text("الماركة: ${customer.carBrand}"),
+          Text("رقم اللوحة : ${customer.plateNumber}"),
+        ],
+      ),
+      Text("${customer.notes} : ملاحظة"),
+    ];
   }
 }
