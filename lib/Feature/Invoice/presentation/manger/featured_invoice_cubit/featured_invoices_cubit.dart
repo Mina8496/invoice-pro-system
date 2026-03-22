@@ -9,10 +9,9 @@ part 'featured_invoices_state.dart';
 
 class FeaturedInvoicesCubit extends Cubit<InvoiceState> {
   final InvoicePaginationService paginationService;
-
-
+  static const int itemsPerPage = 8;
   List<List<InvoiceItemEntity>> get pages {
-    return paginationService.splitItems(state.items, 12);
+    return paginationService.splitItems(state.items, itemsPerPage);
   }
 
   FeaturedInvoicesCubit(this.paginationService)
@@ -47,26 +46,22 @@ class FeaturedInvoicesCubit extends Cubit<InvoiceState> {
   void generateInvoiceNumber() {
     emit(state.copyWith(invoiceNumber: state.invoiceNumber + 1));
   }
-  
+
   List<InvoicePageModel> get pageModels {
-  final pages = paginationService.splitItems(state.items, 12);
+    final pages = paginationService.splitItems(state.items, 12);
 
-  if (pages.isEmpty) {
-    return [
-      InvoicePageModel(
-        items: [],
-        showCustomer: true,
-        showTotals: true,
-      ),
-    ];
+    if (pages.isEmpty) {
+      return [
+        InvoicePageModel(items: [], showCustomer: true, showTotals: true),
+      ];
+    }
+
+    return List.generate(pages.length, (index) {
+      return InvoicePageModel(
+        items: pages[index],
+        showCustomer: index == 0,
+        showTotals: index == pages.length - 1,
+      );
+    });
   }
-
-  return List.generate(pages.length, (index) {
-    return InvoicePageModel(
-      items: pages[index],
-      showCustomer: index == 0,
-      showTotals: index == pages.length - 1,
-    );
-  });
-}
 }

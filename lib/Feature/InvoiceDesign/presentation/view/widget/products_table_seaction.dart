@@ -7,19 +7,19 @@ class ProductsTableSeaction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const int maxRows = 4;
+    const int maxRows = 8; // عدد الصفوف الثابت
 
-    int emptyRows = maxRows - items.length;
+    final int emptyRows = (maxRows - items.length).clamp(0, maxRows);
 
     return Table(
       border: TableBorder.all(),
       columnWidths: const {
-        0: FlexColumnWidth(12),
-        1: FlexColumnWidth(4),
-        2: FlexColumnWidth(4),
+        0: FlexColumnWidth(10),
+        1: FlexColumnWidth(3),
+        2: FlexColumnWidth(3),
       },
       children: [
-        /// Header
+        /// HEADER
         const TableRow(
           decoration: BoxDecoration(color: Color(0xffeeeeee)),
           children: [
@@ -50,7 +50,7 @@ class ProductsTableSeaction extends StatelessWidget {
         }),
 
         /// الصفوف الفاضية
-        ...List.generate(emptyRows > 0 ? emptyRows : 0, (index) {
+        ...List.generate(emptyRows, (index) {
           return TableRow(children: [cell(""), cell(""), cell("")]);
         }),
       ],

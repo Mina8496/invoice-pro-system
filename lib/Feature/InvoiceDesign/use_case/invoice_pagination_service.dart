@@ -1,12 +1,14 @@
 class InvoicePaginationService {
-  List<List<T>> splitItems<T>(List<T> items, int perPage) {
+  List<List<T>> splitItems<T>(List<T>? items, int perPage) {
+    final safeItems = items ?? [];
+
     final pages = <List<T>>[];
 
-    for (int i = 0; i < items.length; i += perPage) {
+    for (int i = 0; i < safeItems.length; i += perPage) {
       pages.add(
-        items.sublist(
+        safeItems.sublist(
           i,
-          i + perPage > items.length ? items.length : i + perPage,
+          (i + perPage > safeItems.length) ? safeItems.length : i + perPage,
         ),
       );
     }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:invoicepro/Feature/Invoice/presentation/view/widget/services_section.dart';
 import 'package:invoicepro/Feature/InvoiceDesign/presentation/view/InvoiceDesign.dart';
 import 'package:invoicepro/Feature/InvoiceDesign/presentation/view/widget/customer_dataForm_section.dart';
+import 'package:invoicepro/Feature/InvoiceDesign/presentation/view/widget/items_list_section.dart';
 import 'package:invoicepro/core/utils/Asset_Paths.dart';
 
 class InvoicePageBody extends StatelessWidget {
@@ -28,6 +29,8 @@ class InvoicePageBody extends StatelessWidget {
                   CustomerDataFormSection(),
                   SizedBox(height: 10),
                   ServicesSection(),
+                  SizedBox(height: 10),
+                  ItemsListSection(),
                 ],
               ),
             ),

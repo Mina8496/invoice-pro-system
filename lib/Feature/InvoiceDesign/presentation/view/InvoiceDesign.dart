@@ -17,63 +17,38 @@ class InvoiceDesign extends StatelessWidget {
     return BlocBuilder<FeaturedInvoicesCubit, InvoiceState>(
       builder: (context, state) {
         final cubit = context.watch<FeaturedInvoicesCubit>();
-        final pages = cubit.pageModels;
+        final pages = cubit.pageModels.isEmpty ? [] : cubit.pageModels;
         final customer = cubit.state.customer;
-        final items = state.items;
 
-        return ListView.builder(
-          shrinkWrap: true,
-          itemCount: pages.isEmpty ? 1 : pages.length,
-          itemBuilder: (context, index) {
-            final page = pages[index];
+        return SingleChildScrollView(
+          child: Column(
+            children: pages.map((page) {
+              return Container(
+                margin: const EdgeInsets.only(bottom: 20),
+                width: 595,
+                padding: const EdgeInsets.all(20),
+                color: Colors.white,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    HeadSeactionsInvoiceDesign(),
+                    InvoiceNumberSaction(),
 
-            ProductsTableSeaction(items: items);
+                    if (page.showCustomer && customer != null)
+                      ...dataClent(customer),
 
-            if (page.showTotals) {
-              CalculatorTotalsProductSaction();
-            }
+                    ProductsTableSeaction(items: page.items),
 
-            return Container(
-              margin: const EdgeInsets.only(bottom: 20),
-              width: 595,
-              height: 842,
-              padding: const EdgeInsets.all(20),
-              color: Colors.white,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  /// HEADER
-                  HeadSeactionsInvoiceDesign(),
+                    if (page.showTotals) CalculatorTotalsProductSaction(),
 
-                  SizedBox(height: 10),
-
-                  /// رقم الفاتورة
-                  InvoiceNumberSaction(),
-
-                  SizedBox(height: 10),
-
-                  /// بيانات العميل (أول صفحة فقط)
-                  if (page.showCustomer && customer != null)
-                    ...dataClent(customer),
-
-                  SizedBox(height: 10),
-
-                  /// الجدول
-                  ProductsTableSeaction(items: page.items),
-
-                  /// الإجمالي (آخر صفحة فقط)
-                  if (page.showTotals) CalculatorTotalsProductSaction(),
-                  const Spacer(),
-
-                  SizedBox(height: 10),
-                  const Divider(),
-
-                  /// الفوتر
-                  FooterSeactions(),
-                ],
-              ),
-            );
-          },
+                    const SizedBox(height: 20),
+                    const Divider(),
+                    FooterSeactions(),
+                  ],
+                ),
+              );
+            }).toList(),
+          ),
         );
       },
     );
@@ -81,19 +56,21 @@ class InvoiceDesign extends StatelessWidget {
 
   List<Widget> dataClent(InvoiceEntity customer) {
     return [
-      Text("اسم العميل : ${customer.customerName}"),
+      Text("${customer.customerName} : اسم العميل"),
       SizedBox(height: 5),
       Text("${customer.phone} : التليفون"),
       SizedBox(height: 5),
       Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("الموديل: ${customer.carModel}"),
-          Text("الماركة: ${customer.carBrand}"),
-          Text("رقم اللوحة : ${customer.plateNumber}"),
+          Text("${customer.carModel} : الموديل"),
+          Text("${customer.carBrand} : الماركة"),
+          Text("${customer.plateNumber} : رقم اللوحة"),
         ],
       ),
+      SizedBox(height: 10),
       Text("${customer.notes} : ملاحظة"),
+      SizedBox(height: 10),
     ];
   }
 }

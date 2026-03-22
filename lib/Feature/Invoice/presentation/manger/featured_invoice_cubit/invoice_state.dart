@@ -8,10 +8,10 @@ class InvoiceState {
   final int invoiceNumber;
 
   InvoiceState({
-    required this.items,
-    required this.total,
+    this.items = const [],
+    this.total = 0,
     this.customer,
-    required this.invoiceNumber,
+    this.invoiceNumber = 1,
   });
 
   InvoiceState copyWith({
