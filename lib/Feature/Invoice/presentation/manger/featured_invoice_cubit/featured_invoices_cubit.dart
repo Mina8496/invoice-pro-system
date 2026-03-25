@@ -16,6 +16,13 @@ class FeaturedInvoicesCubit extends Cubit<InvoiceState> {
 
   static const int itemsPerPage = 8;
 
+  bool isLoading = false;
+
+  void setLoading(bool value) {
+    isLoading = value;
+    emit(state); // أو state جديد حسب تصميمك
+  }
+
   List<List<InvoiceItemEntity>> get pages {
     return paginationService.splitItems(state.items, itemsPerPage);
   }
@@ -84,6 +91,20 @@ class FeaturedInvoicesCubit extends Cubit<InvoiceState> {
     );
 
     return await invoiceRepo.createInvoice(invoiceEntity);
+  }
+
+  InvoiceEntity getCurrentInvoiceEntity() {
+    return InvoiceEntity(
+      invoiceNumber: state.invoiceNumber.toString(),
+      date: DateTime.now(),
+      customerName: state.customer?.customerName ?? '',
+      phone: state.customer?.phone ?? '',
+      carModel: state.customer?.carModel ?? '',
+      carBrand: state.customer?.carBrand ?? '',
+      plateNumber: state.customer?.plateNumber ?? '',
+      items: state.items,
+      notes: '',
+    );
   }
 
   Future<void> loadInvoices() async {
