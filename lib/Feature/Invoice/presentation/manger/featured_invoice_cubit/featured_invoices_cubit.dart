@@ -15,7 +15,7 @@ class FeaturedInvoicesCubit extends Cubit<InvoiceState> {
   final InvoiceRepo invoiceRepo; // إضافة الـ InvoiceRepo
 
   static const int itemsPerPage = 8;
-  
+
   List<List<InvoiceItemEntity>> get pages {
     return paginationService.splitItems(state.items, itemsPerPage);
   }
@@ -84,5 +84,31 @@ class FeaturedInvoicesCubit extends Cubit<InvoiceState> {
     );
 
     return await invoiceRepo.createInvoice(invoiceEntity);
+  }
+
+  Future<void> loadInvoices() async {
+    emit(state.copyWith(items: []));
+
+    final result = await invoiceRepo.getInvoices();
+
+    result.fold(
+      (failure) {
+        print("Error loading invoices: ${failure.message}");
+      },
+      (invoices) {
+        if (invoices.isNotEmpty) {
+          final lastInvoice = invoices.last;
+
+          emit(
+            state.copyWith(
+              items: lastInvoice.items,
+              total: lastInvoice.total,
+              customer: lastInvoice,
+              invoiceNumber: invoices.length + 1,
+            ),
+          );
+        }
+      },
+    );
   }
 }

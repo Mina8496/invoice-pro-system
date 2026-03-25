@@ -16,8 +16,36 @@ class InvoicePage extends StatelessWidget {
 
     return BlocProvider(
       create: (context) =>
-          FeaturedInvoicesCubit(InvoicePaginationService(), invoiceRepo),
-      child: Scaffold(body: const InvoicePageBody()),
+          FeaturedInvoicesCubit(InvoicePaginationService(), invoiceRepo)
+            ..loadInvoices(),
+      child: Scaffold(
+        body: const InvoicePageBody(),
+
+        floatingActionButton: FloatingActionButton.extended(
+          backgroundColor: Colors.green,
+          onPressed: () {
+            _saveAndPrintInvoice(context);
+          },
+          icon: const Icon(Icons.print),
+          label: const Text("حفظ وطباعة"),
+        ),
+      ),
+    );
+  }
+
+  void _saveAndPrintInvoice(BuildContext context) async {
+    final cubit = context.read<FeaturedInvoicesCubit>();
+
+    final result = await cubit.saveInvoice();
+
+    result.fold(
+      (failure) {
+        print("Error: ${failure.message}");
+      },
+      (id) {
+        print("Saved with id: $id");
+        cubit.generateInvoiceNumber();
+      },
     );
   }
 }
