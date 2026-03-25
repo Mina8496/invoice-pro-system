@@ -26,8 +26,6 @@ class _CustomerDataFormSectionState extends State<CustomerDataFormSection> {
     if (_formKey.currentState!.validate()) {
       final cubit = context.read<FeaturedInvoicesCubit>();
 
-      cubit.generateInvoiceNumber();
-
       final customer = InvoiceEntity(
         invoiceNumber: cubit.state.invoiceNumber.toString(),
         date: DateTime.now(),

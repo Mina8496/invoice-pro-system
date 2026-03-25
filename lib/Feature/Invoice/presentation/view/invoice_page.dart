@@ -34,7 +34,33 @@ class InvoicePage extends StatelessWidget {
                       backgroundColor: Colors.green,
                       onPressed: cubit.isLoading
                           ? null
-                          : () => _saveAndPrintInvoice(context),
+                          : () async {
+                              cubit.setLoading(true);
+                              final result = await cubit.saveInvoice();
+                              cubit.setLoading(false);
+
+                              result.fold(
+                                (failure) => _showSnackBar(
+                                  context,
+                                  "فشل الحفظ: ${failure.message}",
+                                  false,
+                                ),
+                                (id) async {
+                                  _showSnackBar(
+                                    context,
+                                    "تم حفظ الفاتورة بنجاح",
+                                    true,
+                                  );
+                                  cubit.generateInvoiceNumber();
+                                  final invoiceEntity = cubit
+                                      .getCurrentInvoiceEntity();
+                                  await PdfService.generateAndPrintInvoice(
+                                    invoiceEntity,
+                                    cubit.pageModels,
+                                  );
+                                },
+                              );
+                            },
                       icon: cubit.isLoading
                           ? const SizedBox(
                               width: 18,
@@ -51,30 +77,6 @@ class InvoicePage extends StatelessWidget {
           );
         },
       ),
-    );
-  }
-
-  void _saveAndPrintInvoice(BuildContext context) async {
-    final cubit = context.read<FeaturedInvoicesCubit>();
-
-    cubit.setLoading(true);
-
-    final result = await cubit.saveInvoice();
-
-    cubit.setLoading(false);
-
-    result.fold(
-      (failure) {
-        _showSnackBar(context, "فشل الحفظ: ${failure.message}", false);
-      },
-      (id) async {
-        _showSnackBar(context, "تم حفظ الفاتورة بنجاح", true);
-        cubit.generateInvoiceNumber();
-
-        // Generate PDF
-        final invoiceEntity = cubit.getCurrentInvoiceEntity();
-        await PdfService.generateAndPrintInvoice(invoiceEntity);
-      },
     );
   }
 }
