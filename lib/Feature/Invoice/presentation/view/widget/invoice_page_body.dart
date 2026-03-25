@@ -23,7 +23,6 @@ class InvoicePageBody extends StatelessWidget {
           Expanded(
             flex: 2,
             child: SingleChildScrollView(
-              // ✅ مهم جدًا
               child: Column(
                 children: const [
                   CustomerDataFormSection(),
@@ -35,9 +34,7 @@ class InvoicePageBody extends StatelessWidget {
               ),
             ),
           ),
-
           const SizedBox(width: 10),
-
           Align(
             alignment: Alignment.topCenter,
             child: SizedBox(
@@ -45,8 +42,30 @@ class InvoicePageBody extends StatelessWidget {
               child: Card(elevation: 10, child: InvoiceDesign()),
             ),
           ),
+          const SizedBox(width: 10),
+          // زر حفظ وطباعة
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: ElevatedButton(
+              onPressed: () {
+                // هنا سيتم استدعاء دالة حفظ الفاتورة
+                _saveAndPrintInvoice(context);
+              },
+              child: Text("حفظ وطباعة"),
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  void _saveAndPrintInvoice(BuildContext context) {
+    // قم بتنفيذ منطق حفظ الفاتورة هنا
+    // يمكنك استدعاء دالة من الـ Cubit لحفظ الفاتورة
+    // وعند الانتهاء، يمكنك تنفيذ منطق الطباعة
+
+    // على سبيل المثال:
+    // context.read<FeaturedInvoicesCubit>().saveInvoice();
+    // ثم قم بإضافة منطق الطباعة هنا.
   }
 }

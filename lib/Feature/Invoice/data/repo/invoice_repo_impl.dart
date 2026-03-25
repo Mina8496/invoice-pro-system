@@ -13,28 +13,11 @@ class InvoiceRepoImpl implements InvoiceRepo {
   @override
   Future<Either<Failure, int>> createInvoice(InvoiceEntity invoice) async {
     try {
-      final db = await DatabaseHelper.database;
-
-      final invoiceId = await db.insert("invoices", {
-        "customer_name": invoice.customerName,
-        "phone": invoice.phone,
-        "carModel": invoice.carModel,
-        "carBrand": invoice.carBrand,
-        "plateNumber": invoice.plateNumber,
-        "date": invoice.date.toIso8601String(),
-        "total": invoice.total,
-      });
-
-      for (var item in invoice.items) {
-        await db.insert("invoice_items", {
-          "invoice_id": invoiceId,
-          "name": item.name,
-          "quantity": item.quantity,
-          "price": item.price,
-          "total": item.total,
-        });
-      }
-
+      final invoiceId = await DatabaseHelper.insertInvoice(
+        invoice,
+        invoice.items,
+      );
+      print("Saved Invoice ID: $invoiceId");
       return Right(invoiceId);
     } catch (e) {
       return Left(ServerFailure(e.toString()));
@@ -93,7 +76,6 @@ class InvoiceRepoImpl implements InvoiceRepo {
 
       return Right(
         InvoiceEntity(
-          notes: invoice["notes"].toString(),
           invoiceNumber: invoice["id"].toString(),
           date: DateTime.parse(invoice["date"].toString()),
           customerName: invoice["customer_name"].toString(),
@@ -102,6 +84,7 @@ class InvoiceRepoImpl implements InvoiceRepo {
           carBrand: invoice["carBrand"]?.toString() ?? "",
           plateNumber: invoice["plateNumber"]?.toString() ?? "",
           items: items,
+          notes: '',
         ),
       );
     } catch (e) {
@@ -115,27 +98,25 @@ class InvoiceRepoImpl implements InvoiceRepo {
       final db = await DatabaseHelper.database;
 
       final invoicesMap = await db.query("invoices");
+      final allItems = await db.query("invoice_items");
 
       final List<InvoiceEntity> invoices = [];
 
       for (var invoice in invoicesMap) {
-        final itemsMap = await db.query(
-          "invoice_items",
-          where: "invoice_id = ?",
-          whereArgs: [invoice["id"]],
-        );
-
-        final items = itemsMap.map((map) {
-          return InvoiceItemEntity(
-            name: map["name"].toString(),
-            quantity: map["quantity"] as int,
-            price: (map["price"] as num).toDouble(),
-          );
-        }).toList();
+        final items = allItems
+            .where((item) => item["invoice_id"] == invoice["id"])
+            .map((map) {
+              return InvoiceItemEntity(
+                name: map["name"].toString(),
+                quantity: map["quantity"] as int,
+                price: (map["price"] as num).toDouble(),
+              );
+            })
+            .toList();
 
         invoices.add(
           InvoiceEntity(
-            notes: invoice["notes"].toString(),
+            notes: "",
             invoiceNumber: invoice["id"].toString(),
             date: DateTime.parse(invoice["date"].toString()),
             customerName: invoice["customer_name"].toString(),

@@ -4,17 +4,23 @@ import 'package:invoicepro/Feature/Invoice/domin/entity/invoice_item_entity.dart
 import 'package:invoicepro/Feature/Invoice/presentation/manger/featured_invoice_cubit/invoice_state.dart';
 import 'package:invoicepro/Feature/InvoiceDesign/model/invoice_page_model.dart';
 import 'package:invoicepro/Feature/InvoiceDesign/use_case/invoice_pagination_service.dart';
+import 'package:invoicepro/Feature/Invoice/domin/repo/invoice_repo.dart'; // استيراد الـ InvoiceRepo
+import 'package:dartz/dartz.dart';
+import 'package:invoicepro/core/error/failure.dart';
 
 part 'featured_invoices_state.dart';
 
 class FeaturedInvoicesCubit extends Cubit<InvoiceState> {
   final InvoicePaginationService paginationService;
+  final InvoiceRepo invoiceRepo; // إضافة الـ InvoiceRepo
+
   static const int itemsPerPage = 8;
+  
   List<List<InvoiceItemEntity>> get pages {
     return paginationService.splitItems(state.items, itemsPerPage);
   }
 
-  FeaturedInvoicesCubit(this.paginationService)
+  FeaturedInvoicesCubit(this.paginationService, this.invoiceRepo)
     : super(InvoiceState(items: [], total: 0, invoiceNumber: 1));
 
   void setCustomer(InvoiceEntity data) {
@@ -29,9 +35,7 @@ class FeaturedInvoicesCubit extends Cubit<InvoiceState> {
 
   void removeItem(int index) {
     final updatedItems = List.of(state.items)..removeAt(index);
-
     final total = _calculateTotal(updatedItems);
-
     emit(state.copyWith(items: updatedItems, total: total));
   }
 
@@ -63,5 +67,22 @@ class FeaturedInvoicesCubit extends Cubit<InvoiceState> {
         showTotals: index == pages.length - 1,
       );
     });
+  }
+
+  // دالة حفظ الفاتورة
+  Future<Either<Failure, int>> saveInvoice() async {
+    final invoiceEntity = InvoiceEntity(
+      invoiceNumber: state.invoiceNumber.toString(),
+      date: DateTime.now(),
+      customerName: state.customer?.customerName ?? '',
+      phone: state.customer?.phone ?? '',
+      carModel: state.customer?.carModel ?? '',
+      carBrand: state.customer?.carBrand ?? '',
+      plateNumber: state.customer?.plateNumber ?? '',
+      items: state.items,
+      notes: '', // أضف أي ملاحظات إذا كان لديك
+    );
+
+    return await invoiceRepo.createInvoice(invoiceEntity);
   }
 }
