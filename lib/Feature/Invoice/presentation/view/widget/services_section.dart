@@ -148,64 +148,68 @@ class _ServicesSectionState extends State<ServicesSection> {
         SizedBox(height: 10),
 
         /// القائمة
-        ListView.builder(
-          // scrollDirection: Axis.horizontal,
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          itemCount: services.length,
-          itemBuilder: (context, index) {
-            final item = services[index];
+        SizedBox(
+          height: 500,
+          child: GridView.builder(
+            shrinkWrap: true,
+            itemCount: services.length,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 5, // 2 في الصف
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              // childAspectRatio: 1.1, // شكل الكارت
+            ),
+            itemBuilder: (context, index) {
+              final item = services[index];
 
-            return GestureDetector(
-              onTap: () {
-                context.read<FeaturedInvoicesCubit>().addItem(
-                  InvoiceItemEntity(
-                    name: item.name,
-                    quantity: item.quantity,
-                    price: item.price,
-                  ),
-                );
-              },
-              onLongPress: () => showOptions(index),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    width: 200,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
+              return GestureDetector(
+                onTap: () {
+                  context.read<FeaturedInvoicesCubit>().addItem(
+                    InvoiceItemEntity(
+                      name: item.name,
+                      quantity: item.quantity,
+                      price: item.price,
                     ),
-                    child: Stack(
-                      children: [
-                        Opacity(
-                          opacity: 0.09,
-                          child: Image.asset(
-                            AssetPaths.logo,
-                            fit: BoxFit.cover,
-                          ),
+                  );
+                },
+                onLongPress: () => showOptions(index),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Container(
+                        width: 200,
+                        height: 150,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15),
                         ),
-                        Center(
-                          child: AppText(
-                            text: item.name,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        child: Stack(
+                          children: [
+                            Opacity(
+                              opacity: 0.09,
+                              child: Image.asset(
+                                AssetPaths.logo,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Center(
+                              child: AppText(
+                                text: item.name,
+                                fontSize: 25,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-
-                  // ListTile(
-                  //   title: Text(),
-                  //   subtitle: Text("الكمية: ${item.quantity}"),
-                  //   trailing: Text("${item.price} ج"),
-                  // ),
-                ],
-              ),
-            );
-          },
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ],
     );
