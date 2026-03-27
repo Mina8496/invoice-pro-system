@@ -24,6 +24,10 @@ class InvoiceRepoImpl implements InvoiceRepo {
     }
   }
 
+  Future<List<InvoiceEntity>> fetchInvoices() async {
+    return await DatabaseHelper.getAllInvoices();
+  }
+
   @override
   Future<Either<Failure, void>> deleteInvoice(int id) async {
     try {

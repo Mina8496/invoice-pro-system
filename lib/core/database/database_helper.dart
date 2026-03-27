@@ -49,34 +49,106 @@ class DatabaseHelper {
     ''');
   }
 
- static Future<int> insertInvoice(
-  InvoiceEntity invoice,
-  List<InvoiceItemEntity> items,
-) async {
-  final db = await database;
+  static Future<int> insertInvoice(
+    InvoiceEntity invoice,
+    List<InvoiceItemEntity> items,
+  ) async {
+    final db = await database;
 
-  return await db.transaction((txn) async {
-    int invoiceId = await txn.insert('invoices', {
-      "customer_name": invoice.customerName,
-      "phone": invoice.phone,
-      "carModel": invoice.carModel,
-      "carBrand": invoice.carBrand,
-      "plateNumber": invoice.plateNumber,
-      "date": invoice.date.toIso8601String(),
-      "total": invoice.total,
-    });
-
-    for (var item in items) {
-      await txn.insert('invoice_items', {
-        "invoice_id": invoiceId,
-        "name": item.name,
-        "quantity": item.quantity,
-        "price": item.price,
-        "total": item.total,
+    return await db.transaction((txn) async {
+      int invoiceId = await txn.insert('invoices', {
+        "customer_name": invoice.customerName,
+        "phone": invoice.phone,
+        "carModel": invoice.carModel,
+        "carBrand": invoice.carBrand,
+        "plateNumber": invoice.plateNumber,
+        "date": invoice.date.toIso8601String(),
+        "total": invoice.total,
+        "notes": invoice.notes,
       });
+
+      for (var item in items) {
+        await txn.insert('invoice_items', {
+          "invoice_id": invoiceId,
+          "name": item.name,
+          "quantity": item.quantity,
+          "price": item.price,
+          "total": item.total,
+          // "notes": item.notes,
+        });
+      }
+
+      return invoiceId;
+    });
+  }
+
+  static Future<List<InvoiceItemEntity>> getInvoiceItems(int invoiceId) async {
+    final db = await database;
+
+    final items = await db.query(
+      'invoice_items',
+      where: 'invoice_id = ?',
+      whereArgs: [invoiceId],
+    );
+
+    return items.map((e) {
+      return InvoiceItemEntity(
+        name: e['name'] as String,
+        quantity: e['quantity'] as int,
+        price: e['price'] as double,
+      );
+    }).toList();
+  }
+
+  static Future<List<InvoiceEntity>> getAllInvoices() async {
+    final db = await database;
+
+    // 1️⃣ هات كل الفواتير
+    final invoices = await db.query('invoices', orderBy: 'id DESC');
+
+    // 2️⃣ هات كل items مرة واحدة
+    final allItems = await db.query('invoice_items');
+
+    // 3️⃣ اعمل grouping
+    Map<int, List<InvoiceItemEntity>> itemsMap = {};
+
+    for (var item in allItems) {
+      final invoiceId = item['invoice_id'] as int;
+
+      itemsMap.putIfAbsent(invoiceId, () => []);
+
+      itemsMap[invoiceId]!.add(
+        InvoiceItemEntity(
+          name: item['name'] as String,
+          quantity: item['quantity'] as int,
+          price: item['price'] as double,
+        ),
+      );
     }
 
-    return invoiceId;
-  });
-}
+    // 4️⃣ اربط الفواتير بالـ items
+    List<InvoiceEntity> result = [];
+
+    for (var e in invoices) {
+      final invoiceId = e['id'] as int;
+
+      result.add(
+        InvoiceEntity(
+          invoiceNumber: invoiceId.toString(),
+          date: DateTime.parse(e['date'] as String),
+
+          customerName: e['customer_name'] as String,
+          phone: e['phone'] as String? ?? "",
+          carModel: e['carModel'] as String? ?? "",
+          carBrand: e['carBrand'] as String? ?? "",
+          plateNumber: e['plateNumber'] as String? ?? "",
+          notes: e['notes'] as String? ?? "",
+
+          items: itemsMap[invoiceId] ?? [],
+        ),
+      );
+    }
+
+    return result;
+  }
 }

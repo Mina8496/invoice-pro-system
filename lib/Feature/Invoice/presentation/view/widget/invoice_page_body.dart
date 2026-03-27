@@ -3,6 +3,7 @@ import 'package:invoicepro/Feature/Invoice/presentation/view/widget/services_sec
 import 'package:invoicepro/Feature/InvoiceDesign/presentation/view/InvoiceDesign.dart';
 import 'package:invoicepro/Feature/InvoiceDesign/presentation/view/widget/customer_dataForm_section.dart';
 import 'package:invoicepro/Feature/InvoiceDesign/presentation/view/widget/items_list_section.dart';
+import 'package:invoicepro/Feature/invoices_history/invoices_history_page.dart';
 import 'package:invoicepro/core/utils/Asset_Paths.dart';
 
 class InvoicePageBody extends StatelessWidget {
@@ -24,12 +25,28 @@ class InvoicePageBody extends StatelessWidget {
             flex: 2,
             child: SingleChildScrollView(
               child: Column(
-                children: const [
-                  CustomerDataFormSection(),
-                  SizedBox(height: 10),
-                  ServicesSection(),
-                  SizedBox(height: 10),
-                  ItemsListSection(),
+                children: [
+                  const CustomerDataFormSection(),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      const ServicesSection(),
+                      const SizedBox(width: 15),
+                      IconButton(
+                        icon: const Icon(Icons.history),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const InvoicesHistoryPage(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  const ItemsListSection(),
                 ],
               ),
             ),

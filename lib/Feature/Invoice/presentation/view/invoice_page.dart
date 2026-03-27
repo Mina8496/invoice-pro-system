@@ -54,6 +54,8 @@ class InvoicePage extends StatelessWidget {
                                   cubit.generateInvoiceNumber();
                                   final invoiceEntity = cubit
                                       .getCurrentInvoiceEntity();
+
+                                  // Pass pages here
                                   await PdfService.generateAndPrintInvoice(
                                     invoiceEntity,
                                     cubit.pageModels,
