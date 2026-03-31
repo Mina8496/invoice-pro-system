@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:invoicepro/Feature/Invoice/data/models/service_item.dart';
 import 'package:invoicepro/Feature/Invoice/domin/entity/invoice_entity.dart';
 import 'package:invoicepro/Feature/Invoice/domin/entity/invoice_item_entity.dart';
 import 'package:invoicepro/Feature/Invoice/presentation/manger/featured_invoice_cubit/invoice_state.dart';
@@ -28,7 +29,30 @@ class FeaturedInvoicesCubit extends Cubit<InvoiceState> {
   }
 
   FeaturedInvoicesCubit(this.paginationService, this.invoiceRepo)
-    : super(InvoiceState(items: [], total: 0, invoiceNumber: 1));
+    : super(
+        InvoiceState(
+          items: [],
+          services: [],
+          total: 0,
+          invoiceNumber: 1,
+          customer: null,
+        ),
+      );
+  void addService(ServiceItem service) {
+    final updated = List.of(state.services)..add(service);
+    emit(state.copyWith(services: updated));
+  }
+
+  void removeService(int index) {
+    final updated = List.of(state.services)..removeAt(index);
+    emit(state.copyWith(services: updated));
+  }
+
+  void updateService(int index, ServiceItem newItem) {
+    final updated = List.of(state.services);
+    updated[index] = newItem;
+    emit(state.copyWith(services: updated));
+  }
 
   void setCustomer(InvoiceEntity data) {
     emit(state.copyWith(customer: data));

@@ -7,74 +7,20 @@ import 'package:invoicepro/core/utils/Asset_Paths.dart';
 import 'package:invoicepro/core/utils/widgets/app_textView.dart';
 
 class ServicesSection extends StatefulWidget {
-  const ServicesSection({super.key});
+  final List<ServiceItem> services;
+
+  const ServicesSection({super.key, required this.services});
 
   @override
   State<ServicesSection> createState() => _ServicesSectionState();
 }
 
 class _ServicesSectionState extends State<ServicesSection> {
-  List<ServiceItem> services = [];
-
-  void addServiceDialog() {
-    final nameController = TextEditingController();
-    final priceController = TextEditingController();
-
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          // 👈 مربع
-          borderRadius: BorderRadius.circular(8),
-        ),
-        title: Text("إضافة خدمة"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameController,
-              decoration: InputDecoration(labelText: "اسم الخدمة"),
-            ),
-            SizedBox(height: 10),
-            TextField(
-              controller: priceController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: "السعر"),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              if (nameController.text.isNotEmpty &&
-                  priceController.text.isNotEmpty) {
-                setState(() {
-                  services.add(
-                    ServiceItem(
-                      name: nameController.text,
-                      quantity: 1,
-                      price: double.parse(priceController.text),
-                    ),
-                  );
-                });
-                Navigator.pop(context);
-              }
-            },
-            child: Text("إضافة"),
-          ),
-        ],
-      ),
-    );
-  }
-
   void showOptions(int index) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          // 👈 مربع
-          borderRadius: BorderRadius.circular(8),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -88,9 +34,7 @@ class _ServicesSectionState extends State<ServicesSection> {
             ListTile(
               title: Text("حذف"),
               onTap: () {
-                setState(() {
-                  services.removeAt(index);
-                });
+                context.read<FeaturedInvoicesCubit>().removeItem(index);
                 Navigator.pop(context);
               },
             ),
@@ -101,7 +45,7 @@ class _ServicesSectionState extends State<ServicesSection> {
   }
 
   void editService(int index) {
-    final item = services[index];
+    final item = widget.services[index];
 
     final nameController = TextEditingController(text: item.name);
     final priceController = TextEditingController(text: item.price.toString());
@@ -125,10 +69,14 @@ class _ServicesSectionState extends State<ServicesSection> {
         actions: [
           TextButton(
             onPressed: () {
-              setState(() {
-                item.name = nameController.text;
-                item.price = double.parse(priceController.text);
-              });
+              context.read<FeaturedInvoicesCubit>().updateService(
+                index,
+                ServiceItem(
+                  name: nameController.text,
+                  quantity: item.quantity,
+                  price: double.parse(priceController.text),
+                ),
+              );
               Navigator.pop(context);
             },
             child: Text("حفظ"),
@@ -140,78 +88,58 @@ class _ServicesSectionState extends State<ServicesSection> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        /// زر الإضافة
-        ElevatedButton(onPressed: addServiceDialog, child: Text("إضافة بند")),
+    return GridView.builder(
+      physics: NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: widget.services.length,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: MediaQuery.of(context).size.width > 1200
+            ? 5
+            : 3, // 2 في الصف
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        // childAspectRatio: 1.1, // شكل الكارت
+      ),
+      itemBuilder: (context, index) {
+        final item = widget.services[index];
 
-        SizedBox(height: 10),
-
-        /// القائمة
-        SizedBox(
-          height: 500,
-          child: GridView.builder(
-            shrinkWrap: true,
-            itemCount: services.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 5, // 2 في الصف
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              // childAspectRatio: 1.1, // شكل الكارت
+        return GestureDetector(
+          onTap: () {
+            context.read<FeaturedInvoicesCubit>().addItem(
+              InvoiceItemEntity(
+                name: item.name,
+                quantity: item.quantity,
+                price: item.price,
+              ),
+            );
+          },
+          onLongPress: () => showOptions(index),
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Stack(
+                children: [
+                  Opacity(
+                    opacity: 0.09,
+                    child: Image.asset(AssetPaths.logo, fit: BoxFit.cover),
+                  ),
+                  Center(
+                    child: AppText(
+                      text: item.name,
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
             ),
-            itemBuilder: (context, index) {
-              final item = services[index];
-
-              return GestureDetector(
-                onTap: () {
-                  context.read<FeaturedInvoicesCubit>().addItem(
-                    InvoiceItemEntity(
-                      name: item.name,
-                      quantity: item.quantity,
-                      price: item.price,
-                    ),
-                  );
-                },
-                onLongPress: () => showOptions(index),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Container(
-                        width: 200,
-                        height: 150,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Stack(
-                          children: [
-                            Opacity(
-                              opacity: 0.09,
-                              child: Image.asset(
-                                AssetPaths.logo,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            Center(
-                              child: AppText(
-                                text: item.name,
-                                fontSize: 25,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 }

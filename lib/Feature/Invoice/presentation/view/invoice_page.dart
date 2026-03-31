@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:invoicepro/Feature/Invoice/data/models/service_item.dart';
 import 'package:invoicepro/Feature/Invoice/data/repo/invoice_repo_impl.dart';
 import 'package:invoicepro/Feature/Invoice/presentation/manger/featured_invoice_cubit/featured_invoices_cubit.dart';
 import 'package:invoicepro/Feature/Invoice/presentation/manger/featured_invoice_cubit/invoice_state.dart';
@@ -8,13 +9,67 @@ import 'package:invoicepro/Feature/InvoiceDesign/use_case/invoice_pagination_ser
 import 'package:invoicepro/core/database/database_helper.dart';
 import 'package:invoicepro/core/utils/pdf_service.dart';
 
-class InvoicePage extends StatelessWidget {
+class InvoicePage extends StatefulWidget {
   const InvoicePage({super.key});
+
+  @override
+  State<InvoicePage> createState() => _InvoicePageState();
+}
+
+class _InvoicePageState extends State<InvoicePage> {
+  List<ServiceItem> services = [];
 
   @override
   Widget build(BuildContext context) {
     final databaseHelper = DatabaseHelper();
     final invoiceRepo = InvoiceRepoImpl(databaseHelper);
+
+    void addServiceDialog(BuildContext context) {
+      final nameController = TextEditingController();
+      final priceController = TextEditingController();
+
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          title: Text("إضافة خدمة"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: InputDecoration(labelText: "اسم الخدمة"),
+              ),
+              SizedBox(height: 10),
+              TextField(
+                controller: priceController,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(labelText: "السعر"),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                if (nameController.text.isNotEmpty &&
+                    priceController.text.isNotEmpty) {
+                  context.read<FeaturedInvoicesCubit>().addService(
+                    ServiceItem(
+                      name: nameController.text,
+                      quantity: 1,
+                      price: double.parse(priceController.text),
+                    ),
+                  );
+
+                  Navigator.pop(context);
+                }
+              },
+              child: Text("إضافة"),
+            ),
+          ],
+        ),
+      );
+    }
 
     return BlocProvider(
       create: (context) =>
@@ -23,7 +78,16 @@ class InvoicePage extends StatelessWidget {
       child: Builder(
         builder: (context) {
           return Scaffold(
-            body: const InvoicePageBody(),
+            appBar: AppBar(
+              actions: [
+                /// زر الإضافة
+                ElevatedButton(
+                  onPressed: () => addServiceDialog(context),
+                  child: Text("إضافة بند"),
+                ),
+              ],
+            ),
+            body: InvoicePageBody(services: services),
 
             floatingActionButton:
                 BlocBuilder<FeaturedInvoicesCubit, InvoiceState>(
