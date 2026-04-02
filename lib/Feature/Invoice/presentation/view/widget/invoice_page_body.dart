@@ -17,6 +17,7 @@ class InvoicePageBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox.expand(
       child: Container(
+        padding: EdgeInsets.symmetric(vertical: 25.0),
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage(AssetPaths.backGround),
@@ -31,6 +32,7 @@ class InvoicePageBody extends StatelessWidget {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
+                    SizedBox(height: 10),
                     const CustomerDataFormSection(),
                     const SizedBox(height: 10),
                     BlocBuilder<FeaturedInvoicesCubit, InvoiceState>(

@@ -6,8 +6,10 @@ import 'package:invoicepro/Feature/Invoice/presentation/manger/featured_invoice_
 import 'package:invoicepro/Feature/Invoice/presentation/manger/featured_invoice_cubit/invoice_state.dart';
 import 'package:invoicepro/Feature/Invoice/presentation/view/widget/invoice_page_body.dart';
 import 'package:invoicepro/Feature/InvoiceDesign/use_case/invoice_pagination_service.dart';
+import 'package:invoicepro/Feature/invoices_history/invoices_history_page.dart';
 import 'package:invoicepro/core/database/database_helper.dart';
 import 'package:invoicepro/core/utils/pdf_service.dart';
+import 'package:invoicepro/core/utils/widgets/app_textView.dart';
 
 class InvoicePage extends StatefulWidget {
   const InvoicePage({super.key});
@@ -78,12 +80,28 @@ class _InvoicePageState extends State<InvoicePage> {
       child: Builder(
         builder: (context) {
           return Scaffold(
+            extendBodyBehindAppBar: true,
             appBar: AppBar(
+              toolbarHeight: 36,
+              titleSpacing: 0,
+              elevation: 0,
+              // backgroundColor: Colors.blueAccent,
               actions: [
+                Opacity(opacity: 0.2),
+
                 /// زر الإضافة
-                ElevatedButton(
+                TextButton(
                   onPressed: () => addServiceDialog(context),
-                  child: Text("إضافة بند"),
+                  child: AppText(text: "إضافة بند", fontSize: 15),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => InvoicesHistoryPage()),
+                    );
+                  },
+                  child: AppText(text: "سجل الفواتير", fontSize: 15),
                 ),
               ],
             ),
@@ -128,6 +146,7 @@ class _InvoicePageState extends State<InvoicePage> {
                                     invoiceEntity,
                                     cubit.pageModels,
                                   );
+                                  cubit.loadInvoices();
                                 },
                               );
                             },

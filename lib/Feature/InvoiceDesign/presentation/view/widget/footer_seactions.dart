@@ -13,7 +13,7 @@ class FooterSeactions extends StatelessWidget {
         const Center(
           child: Text(
             "مراجعة الزوايا : 15 يوم  - استكمال الزوايا خلال 3 اشهر بفاتورة الكشف عند استكمال الزوايا يتم اخذ دور جديد",
-            style: TextStyle(fontSize: 12),
+            style: TextStyle(fontSize: 10),
           ),
         ),
         SizedBox(height: 10.h),

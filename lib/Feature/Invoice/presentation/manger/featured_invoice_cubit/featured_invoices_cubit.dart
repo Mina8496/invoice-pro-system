@@ -22,7 +22,7 @@ class FeaturedInvoicesCubit extends Cubit<InvoiceState> {
 
   void setLoading(bool value) {
     isLoading = value;
-    emit(state); // أو state جديد حسب تصميمك
+    emit(state);
   }
 
   List<List<InvoiceItemEntity>> get pages {

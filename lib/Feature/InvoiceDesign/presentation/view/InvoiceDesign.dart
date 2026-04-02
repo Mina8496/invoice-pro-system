@@ -56,7 +56,7 @@ class InvoiceDesign extends StatelessWidget {
 
   List<Widget> dataClent(InvoiceEntity customer) {
     return [
-      Text("${customer.customerName} : اسم العميل"),
+      Text("اسم العميل : ${customer.customerName}"),
       SizedBox(height: 5),
       Text("${customer.phone} : التليفون"),
       SizedBox(height: 5),
@@ -65,11 +65,11 @@ class InvoiceDesign extends StatelessWidget {
         children: [
           Text("${customer.carModel} : الموديل"),
           Text("${customer.carBrand} : الماركة"),
-          Text("${customer.plateNumber} : رقم اللوحة"),
+          Text("رقم اللوحة : ${customer.plateNumber}"),
         ],
       ),
       SizedBox(height: 10),
-      Text("${customer.notes} : ملاحظة"),
+      Text("ملاحظة : ${customer.notes}"),
       SizedBox(height: 10),
     ];
   }
