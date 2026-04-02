@@ -35,9 +35,7 @@ class InvoicePageBody extends StatelessWidget {
                     const SizedBox(height: 10),
                     BlocBuilder<FeaturedInvoicesCubit, InvoiceState>(
                       builder: (context, state) {
-                        final cubit = context.read<FeaturedInvoicesCubit>();
-
-                        return ServicesSection(services: cubit.state.services);
+                        return ServicesSection(services: state.services);
                       },
                     ),
 

@@ -17,8 +17,6 @@ class InvoicePage extends StatefulWidget {
 }
 
 class _InvoicePageState extends State<InvoicePage> {
-  List<ServiceItem> services = [];
-
   @override
   Widget build(BuildContext context) {
     final databaseHelper = DatabaseHelper();
@@ -50,10 +48,10 @@ class _InvoicePageState extends State<InvoicePage> {
           ),
           actions: [
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 if (nameController.text.isNotEmpty &&
                     priceController.text.isNotEmpty) {
-                  context.read<FeaturedInvoicesCubit>().addService(
+                  await context.read<FeaturedInvoicesCubit>().addService(
                     ServiceItem(
                       name: nameController.text,
                       quantity: 1,
@@ -74,7 +72,9 @@ class _InvoicePageState extends State<InvoicePage> {
     return BlocProvider(
       create: (context) =>
           FeaturedInvoicesCubit(InvoicePaginationService(), invoiceRepo)
+            ..loadServices()
             ..loadInvoices(),
+
       child: Builder(
         builder: (context) {
           return Scaffold(
@@ -87,7 +87,11 @@ class _InvoicePageState extends State<InvoicePage> {
                 ),
               ],
             ),
-            body: InvoicePageBody(services: services),
+            body: BlocBuilder<FeaturedInvoicesCubit, InvoiceState>(
+              builder: (context, state) {
+                return InvoicePageBody(services: state.services);
+              },
+            ),
 
             floatingActionButton:
                 BlocBuilder<FeaturedInvoicesCubit, InvoiceState>(

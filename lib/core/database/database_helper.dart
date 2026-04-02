@@ -23,30 +23,58 @@ class DatabaseHelper {
 
   static Future<void> _onCreate(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE invoices(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        customer_name TEXT,
-        phone TEXT,
-        carModel TEXT,
-        carBrand TEXT,
-        plateNumber TEXT,
-        date TEXT,
-        total REAL,
-        notes TEXT
-      )
-    ''');
+    CREATE TABLE invoices(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      customer_name TEXT,
+      phone TEXT,
+      carModel TEXT,
+      carBrand TEXT,
+      plateNumber TEXT,
+      date TEXT,
+      total REAL,
+      notes TEXT
+    )
+  ''');
 
     await db.execute('''
-      CREATE TABLE invoice_items(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        invoice_id INTEGER,
-        name TEXT,
-        quantity INTEGER,
-        price REAL,
-        total REAL,
-        notes TEXT
-      )
-    ''');
+    CREATE TABLE invoice_items(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      invoice_id INTEGER,
+      name TEXT,
+      quantity INTEGER,
+      price REAL,
+      total REAL,
+      notes TEXT
+    )
+  ''');
+
+    await db.execute('''
+    CREATE TABLE services(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT,
+      price REAL
+    )
+  ''');
+  }
+
+  // إضافة خدمة
+  static Future<int> insertService(String name, double price) async {
+    final db = await database;
+
+    return await db.insert('services', {'name': name, 'price': price});
+  }
+
+  // جلب كل الخدمات
+  static Future<List<Map<String, dynamic>>> getServices() async {
+    final db = await database;
+    return await db.query('services');
+  }
+
+  // حذف خدمة
+  static Future<void> deleteService(int id) async {
+    final db = await database;
+
+    await db.delete('services', where: 'id = ?', whereArgs: [id]);
   }
 
   static Future<int> insertInvoice(
@@ -103,13 +131,10 @@ class DatabaseHelper {
   static Future<List<InvoiceEntity>> getAllInvoices() async {
     final db = await database;
 
-    // 1️⃣ هات كل الفواتير
     final invoices = await db.query('invoices', orderBy: 'id DESC');
 
-    // 2️⃣ هات كل items مرة واحدة
     final allItems = await db.query('invoice_items');
 
-    // 3️⃣ اعمل grouping
     Map<int, List<InvoiceItemEntity>> itemsMap = {};
 
     for (var item in allItems) {
@@ -126,7 +151,6 @@ class DatabaseHelper {
       );
     }
 
-    // 4️⃣ اربط الفواتير بالـ items
     List<InvoiceEntity> result = [];
 
     for (var e in invoices) {

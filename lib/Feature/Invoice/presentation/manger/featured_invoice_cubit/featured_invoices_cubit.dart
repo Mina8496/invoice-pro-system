@@ -7,6 +7,7 @@ import 'package:invoicepro/Feature/InvoiceDesign/model/invoice_page_model.dart';
 import 'package:invoicepro/Feature/InvoiceDesign/use_case/invoice_pagination_service.dart';
 import 'package:invoicepro/Feature/Invoice/domin/repo/invoice_repo.dart'; // استيراد الـ InvoiceRepo
 import 'package:dartz/dartz.dart';
+import 'package:invoicepro/core/database/database_helper.dart';
 import 'package:invoicepro/core/error/failure.dart';
 
 part 'featured_invoices_state.dart';
@@ -38,9 +39,20 @@ class FeaturedInvoicesCubit extends Cubit<InvoiceState> {
           customer: null,
         ),
       );
-  void addService(ServiceItem service) {
-    final updated = List.of(state.services)..add(service);
-    emit(state.copyWith(services: updated));
+  Future<void> addService(ServiceItem service) async {
+    await DatabaseHelper.insertService(service.name, service.price);
+
+    await loadServices();
+  }
+
+  Future<void> loadServices() async {
+    final data = await DatabaseHelper.getServices();
+
+    final services = data.map((e) {
+      return ServiceItem(name: e['name'], price: e['price'], quantity: 1);
+    }).toList();
+
+    emit(state.copyWith(services: services));
   }
 
   void removeService(int index) {
