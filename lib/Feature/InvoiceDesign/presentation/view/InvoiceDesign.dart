@@ -15,10 +15,15 @@ class InvoiceDesign extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<FeaturedInvoicesCubit, InvoiceState>(
+      buildWhen: (previous, current) =>
+          previous.customer != current.customer ||
+          previous.items != current.items ||
+          previous.invoiceNumber != current.invoiceNumber,
       builder: (context, state) {
         final cubit = context.watch<FeaturedInvoicesCubit>();
-        final pages = cubit.pageModels.isEmpty ? [] : cubit.pageModels;
-        final customer = cubit.state.customer;
+
+        final pages = cubit.pageModels;
+        final customer = state.customer;
 
         return SingleChildScrollView(
           child: Column(
@@ -69,7 +74,7 @@ class InvoiceDesign extends StatelessWidget {
         ],
       ),
       SizedBox(height: 10),
-      Text("ملاحظة : ${customer.notes}"),
+      Text(": ملاحظة ${customer.notes}"),
       SizedBox(height: 10),
     ];
   }

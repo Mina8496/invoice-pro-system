@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:invoicepro/Feature/Invoice/domin/entity/invoice_entity.dart';
 import 'package:invoicepro/Feature/Invoice/presentation/manger/featured_invoice_cubit/featured_invoices_cubit.dart';
+import 'package:invoicepro/Feature/Invoice/presentation/manger/featured_invoice_cubit/invoice_state.dart';
 
 class CustomerDataFormSection extends StatefulWidget {
   const CustomerDataFormSection({super.key});
@@ -23,7 +24,9 @@ class _CustomerDataFormSectionState extends State<CustomerDataFormSection> {
   final notesController = TextEditingController();
 
   void saveCustomer() {
-    if (_formKey.currentState!.validate()) {
+    FocusScope.of(context).unfocus();
+
+    if (_formKey.currentState?.validate() ?? false) {
       final cubit = context.read<FeaturedInvoicesCubit>();
 
       final customer = InvoiceEntity(
@@ -40,25 +43,9 @@ class _CustomerDataFormSectionState extends State<CustomerDataFormSection> {
 
       cubit.setCustomer(customer);
 
-      if (_formKey.currentState!.validate()) {
-        final customer = InvoiceEntity(
-          invoiceNumber: "",
-          date: DateTime.now(),
-          customerName: nameController.text,
-          phone: phoneController.text,
-          carModel: carModelController.text,
-          carBrand: carBrandController.text,
-          plateNumber: plateController.text,
-          notes: notesController.text,
-          items: [],
-        );
-
-        context.read<FeaturedInvoicesCubit>().setCustomer(customer);
-
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text("تم حفظ بيانات العميل")));
-      }
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("تم حفظ بيانات العميل")));
     }
   }
 
@@ -75,111 +62,122 @@ class _CustomerDataFormSectionState extends State<CustomerDataFormSection> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 6,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              /// اسم + تليفون
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: nameController,
-                      decoration: const InputDecoration(
-                        labelText: "اسم العميل",
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) => value!.isEmpty ? "مطلوب" : null,
-                    ),
-                  ),
-                  SizedBox(width: 5.w),
-                  Expanded(
-                    child: TextFormField(
-                      controller: phoneController,
-                      keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(
-                        labelText: "التليفون",
-                        border: OutlineInputBorder(),
-                      ),
-                      validator: (value) => value!.isEmpty ? "مطلوب" : null,
-                    ),
-                  ),
-                ],
-              ),
+    return BlocListener<FeaturedInvoicesCubit, InvoiceState>(
+      listenWhen: (previous, current) => previous.customer != current.customer,
+      listener: (context, state) {
+        if (state.customer == null) {
+          nameController.text = '';
+          phoneController.text = '';
+          carModelController.text = '';
+          carBrandController.text = '';
+          plateController.text = '';
+          notesController.text = '';
 
-              SizedBox(height: 5.h),
-
-              /// موديل + ماركة
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: carModelController,
-                      decoration: const InputDecoration(
-                        labelText: "الموديل",
-                        border: OutlineInputBorder(),
+          _formKey.currentState?.reset();
+        }
+      },
+      child: Card(
+        elevation: 6,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                /// اسم + تليفون
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: nameController,
+                        decoration: const InputDecoration(
+                          labelText: "اسم العميل",
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (value) => value!.isEmpty ? "مطلوب" : null,
                       ),
                     ),
-                  ),
-                  SizedBox(width: 5.w),
-                  Expanded(
-                    child: TextFormField(
-                      controller: carBrandController,
-                      decoration: const InputDecoration(
-                        labelText: "الماركة",
-                        border: OutlineInputBorder(),
+                    SizedBox(width: 5.w),
+                    Expanded(
+                      child: TextFormField(
+                        controller: phoneController,
+                        keyboardType: TextInputType.phone,
+                        decoration: const InputDecoration(
+                          labelText: "التليفون",
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (value) => value!.isEmpty ? "مطلوب" : null,
                       ),
                     ),
-                  ),
-                ],
-              ),
-
-              SizedBox(height: 8.h),
-
-              /// رقم اللوحة
-              TextFormField(
-                controller: plateController,
-                decoration: const InputDecoration(
-                  labelText: "رقم اللوحة",
-                  border: OutlineInputBorder(),
+                  ],
                 ),
-              ),
 
-              SizedBox(height: 5.h),
+                SizedBox(height: 5.h),
 
-              /// ملاحظة
-              TextFormField(
-                controller: notesController,
-                maxLines: 1,
-                decoration: const InputDecoration(
-                  labelText: "ملاحظة",
-                  border: OutlineInputBorder(),
+                /// موديل + ماركة
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: carModelController,
+                        decoration: const InputDecoration(
+                          labelText: "الموديل",
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 5.w),
+                    Expanded(
+                      child: TextFormField(
+                        controller: carBrandController,
+                        decoration: const InputDecoration(
+                          labelText: "الماركة",
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
 
-              SizedBox(height: 5.h),
+                SizedBox(height: 8.h),
 
-              /// زر حفظ
-              GestureDetector(
-                onTap: saveCustomer,
-                child: Container(
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(15),
+                /// رقم اللوحة
+                TextFormField(
+                  controller: plateController,
+                  decoration: const InputDecoration(
+                    labelText: "رقم اللوحة",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+
+                SizedBox(height: 5.h),
+
+                /// ملاحظة
+                TextFormField(
+                  controller: notesController,
+                  maxLines: 1,
+                  decoration: const InputDecoration(
+                    labelText: "ملاحظة",
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+
+                SizedBox(height: 5.h),
+
+                /// زر حفظ
+                ElevatedButton(
+                  onPressed: saveCustomer,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
                   ),
                   child: const Text(
                     "حفظ البيانات",
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

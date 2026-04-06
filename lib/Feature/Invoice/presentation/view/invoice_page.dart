@@ -75,7 +75,7 @@ class _InvoicePageState extends State<InvoicePage> {
       create: (context) =>
           FeaturedInvoicesCubit(InvoicePaginationService(), invoiceRepo)
             ..loadServices()
-            ..loadInvoices(),
+            ..initInvoiceNumberOnly(),
 
       child: Builder(
         builder: (context) {
@@ -85,7 +85,7 @@ class _InvoicePageState extends State<InvoicePage> {
               toolbarHeight: 36,
               titleSpacing: 0,
               elevation: 0,
-              // backgroundColor: Colors.blueAccent,
+              backgroundColor: Colors.white,
               actions: [
                 Opacity(opacity: 0.2),
 
@@ -114,7 +114,7 @@ class _InvoicePageState extends State<InvoicePage> {
             floatingActionButton:
                 BlocBuilder<FeaturedInvoicesCubit, InvoiceState>(
                   builder: (context, state) {
-                    final cubit = context.read<FeaturedInvoicesCubit>();
+                    final cubit = context.watch<FeaturedInvoicesCubit>();
 
                     return FloatingActionButton.extended(
                       backgroundColor: Colors.green,
@@ -124,7 +124,6 @@ class _InvoicePageState extends State<InvoicePage> {
                               cubit.setLoading(true);
                               final result = await cubit.saveInvoice();
                               cubit.setLoading(false);
-
                               result.fold(
                                 (failure) => _showSnackBar(
                                   context,
@@ -137,16 +136,19 @@ class _InvoicePageState extends State<InvoicePage> {
                                     "تم حفظ الفاتورة بنجاح",
                                     true,
                                   );
-                                  cubit.generateInvoiceNumber();
+
                                   final invoiceEntity = cubit
                                       .getCurrentInvoiceEntity();
+                                  final pages = cubit.pageModels;
 
-                                  // Pass pages here
                                   await PdfService.generateAndPrintInvoice(
                                     invoiceEntity,
-                                    cubit.pageModels,
+                                    pages,
                                   );
-                                  cubit.loadInvoices();
+                                  await Future.delayed(
+                                    Duration(milliseconds: 300),
+                                  );
+                                  cubit.resetInvoice();
                                 },
                               );
                             },

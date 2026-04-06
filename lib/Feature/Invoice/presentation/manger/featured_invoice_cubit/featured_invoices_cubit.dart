@@ -15,7 +15,7 @@ part 'featured_invoices_state.dart';
 class FeaturedInvoicesCubit extends Cubit<InvoiceState> {
   final InvoicePaginationService paginationService;
   final InvoiceRepo invoiceRepo; // إضافة الـ InvoiceRepo
-
+  int resetCounter = 0;
   static const int itemsPerPage = 8;
 
   bool isLoading = false;
@@ -53,6 +53,28 @@ class FeaturedInvoicesCubit extends Cubit<InvoiceState> {
     }).toList();
 
     emit(state.copyWith(services: services));
+  }
+
+  Future<void> initInvoiceNumberOnly() async {
+    final result = await invoiceRepo.getInvoices();
+
+    result.fold((_) {}, (invoices) {
+      emit(state.copyWith(invoiceNumber: invoices.length + 1));
+    });
+  }
+
+  void resetInvoice() {
+    resetCounter++;
+    emit(
+      state.copyWith(
+        items: [],
+        services: state.services,
+        total: 0,
+        customer: null,
+        // تزوّد رقم الفاتورة تلقائي
+        invoiceNumber: state.invoiceNumber + 1,
+      ),
+    );
   }
 
   void removeService(int index) {
@@ -154,16 +176,7 @@ class FeaturedInvoicesCubit extends Cubit<InvoiceState> {
       },
       (invoices) {
         if (invoices.isNotEmpty) {
-          final lastInvoice = invoices.last;
-
-          emit(
-            state.copyWith(
-              items: lastInvoice.items,
-              total: lastInvoice.total,
-              customer: lastInvoice,
-              invoiceNumber: invoices.length + 1,
-            ),
-          );
+          emit(state.copyWith(invoiceNumber: invoices.length + 1));
         }
       },
     );
