@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:invoicepro/Feature/Invoice/presentation/view/invoice_page.dart';
+import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:invoicepro/Feature/Login/login_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,13 +14,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScreenUtilInit(
       builder: (context, child) {
-        return MaterialApp(
+        return GetMaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
             fontFamily: "Almarai-Bold",
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
           ),
-          home: const InvoicePage(),
+          home: const LoginPage(),
         );
       },
     );

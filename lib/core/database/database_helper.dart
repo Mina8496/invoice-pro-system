@@ -15,10 +15,45 @@ class DatabaseHelper {
 
     _database = await databaseFactory.openDatabase(
       join(await databaseFactory.getDatabasesPath(), "invoice_pro.db"),
-      options: OpenDatabaseOptions(version: 1, onCreate: _onCreate),
+      options: OpenDatabaseOptions(
+        version: 2,
+        onCreate: _onCreate,
+        onUpgrade: _onUpgrade,
+      ),
     );
 
     return _database!;
+  }
+
+  static Future<void> _onUpgrade(
+    Database db,
+    int oldVersion,
+    int newVersion,
+  ) async {
+    if (oldVersion < 2) {
+      await db.execute('''
+CREATE TABLE IF NOT EXISTS trial (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  start_date TEXT
+)
+''');
+    }
+  }
+
+  static Future<void> insertTrialDate(String date) async {
+    final db = await database;
+    await db.delete('trial');
+    await db.insert('trial', {'start_date': date});
+  }
+
+  static Future<String?> getTrialDate() async {
+    final db = await database;
+    final result = await db.query('trial', limit: 1);
+
+    if (result.isNotEmpty && result.first['start_date'] != null) {
+      return result.first['start_date'] as String;
+    }
+    return null;
   }
 
   static Future<void> _onCreate(Database db, int version) async {
@@ -54,6 +89,24 @@ class DatabaseHelper {
       name TEXT,
       price REAL
     )
+  ''');
+
+    await db.execute('''
+CREATE TABLE IF NOT EXISTS trial (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  start_date TEXT
+)
+''');
+  }
+
+  static Future<void> ensureTrialTable() async {
+    final db = await database;
+
+    await db.execute('''
+  CREATE TABLE IF NOT EXISTS trial (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    start_date TEXT
+  )
   ''');
   }
 
