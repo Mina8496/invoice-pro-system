@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:invoicepro/Feature/Invoice/presentation/manger/getDeviceId.dart';
 import 'package:invoicepro/Feature/Invoice/presentation/view/invoice_page.dart';
 import 'package:invoicepro/core/database/database_helper.dart';
 
@@ -22,16 +23,21 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
+
+    DatabaseHelper.ensureTrialTable();
     loadTrialStatus();
+
     passwordController.addListener(() {
       setState(() {});
     });
   }
 
   Future<void> loadTrialStatus() async {
-    String? savedDate = await DatabaseHelper.getTrialDate();
+    final trial = await DatabaseHelper.getTrial();
 
     if (!mounted) return;
+
+    String? savedDate = trial?['start_date'];
 
     if (savedDate != null) {
       DateTime startDate = DateTime.parse(savedDate);
@@ -55,36 +61,53 @@ class _LoginPageState extends State<LoginPage> {
     bool success = false;
     String message = "";
 
-    // الباسورد الأساسي
-    if (password == mainPassword) {
-      success = true;
-    }
+    // تحقق من الفاضي
     if (password.isEmpty) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("ادخل كلمة المرور")));
-      setState(() => isLoading = false);
-      return;
+      message = "ادخل كلمة المرور";
+    }
+    // الباسورد الأساسي
+    else if (password == mainPassword) {
+      success = true;
     }
     // الباسورد التجريبي
     else if (password == trialPassword) {
-      String? savedDate = await DatabaseHelper.getTrialDate();
+      final deviceId = await getDeviceId();
+      await DatabaseHelper.ensureTrialTable();
 
-      if (savedDate == null) {
+      final trial = await DatabaseHelper.getTrial();
+
+      if (trial == null) {
         // أول استخدام
-        await DatabaseHelper.insertTrialDate(DateTime.now().toIso8601String());
-        success = true;
-      } else {
-        DateTime startDate = DateTime.parse(savedDate);
-        int daysPassed = DateTime.now().difference(startDate).inDays;
+        await DatabaseHelper.insertTrial(
+          deviceId,
+          DateTime.now().toIso8601String(),
+        );
 
-        if (daysPassed < 30) {
-          success = true;
+        success = true;
+        message = "تم تفعيل النسخة التجريبية 30 يوم";
+      } else {
+        final savedDeviceId = trial['device_id'];
+        final startDate = DateTime.parse(trial['start_date']);
+
+        // تحقق من نفس الجهاز
+        if (savedDeviceId != deviceId) {
+          message = "غير مسموح باستخدام التجربة على جهاز آخر";
         } else {
-          message = "انتهت مدة التجربة";
+          int daysPassed = DateTime.now().difference(startDate).inDays;
+
+          // حماية من تغيير الوقت
+          if (DateTime.now().isBefore(startDate)) {
+            message = "تم التلاعب بتاريخ الجهاز";
+          } else if (daysPassed < 30) {
+            success = true;
+          } else {
+            message = "انتهت مدة التجربة";
+          }
         }
       }
-    } else {
+    }
+    // باسورد غلط
+    else {
       message = "كلمة المرور غير صحيحة";
     }
 
@@ -94,6 +117,7 @@ class _LoginPageState extends State<LoginPage> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text("تم تسجيل الدخول")));
+
       Get.off(() => const InvoicePage());
       passwordController.clear();
     } else {

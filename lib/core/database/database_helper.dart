@@ -34,24 +34,28 @@ class DatabaseHelper {
       await db.execute('''
 CREATE TABLE IF NOT EXISTS trial (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  device_id TEXT,
   start_date TEXT
 )
 ''');
     }
   }
 
-  static Future<void> insertTrialDate(String date) async {
+  static Future<void> insertTrial(String deviceId, String date) async {
     final db = await database;
+
     await db.delete('trial');
-    await db.insert('trial', {'start_date': date});
+
+    await db.insert('trial', {'device_id': deviceId, 'start_date': date});
   }
 
-  static Future<String?> getTrialDate() async {
+  static Future<Map<String, dynamic>?> getTrial() async {
     final db = await database;
+
     final result = await db.query('trial', limit: 1);
 
-    if (result.isNotEmpty && result.first['start_date'] != null) {
-      return result.first['start_date'] as String;
+    if (result.isNotEmpty) {
+      return result.first;
     }
     return null;
   }
@@ -94,6 +98,7 @@ CREATE TABLE IF NOT EXISTS trial (
     await db.execute('''
 CREATE TABLE IF NOT EXISTS trial (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+    device_id TEXT,
   start_date TEXT
 )
 ''');
@@ -105,6 +110,7 @@ CREATE TABLE IF NOT EXISTS trial (
     await db.execute('''
   CREATE TABLE IF NOT EXISTS trial (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    device_id TEXT,
     start_date TEXT
   )
   ''');
